@@ -12,13 +12,39 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
+    var positiveQuotes: [String]!
+    
+    var negativeQuotes: [String]!
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        // Assertions to make sure that the quotations are loaded.
+        //assert(positiveQuotes.count > 0, "should load positive quotes")
+        //assert(negativeQuotes.count > 0, "should load negative quotes")
+        
+        
+        negativeQuotes = loadQuotes("positiveQuotes")
+        positiveQuotes = loadQuotes("negativeQuotes")
         return true
     }
+    
+    func loadQuotes(filename: String) -> [String] {
+        //Load data from path
+        let path = NSBundle.mainBundle().pathForResource(filename, ofType: "json");
+        let data = NSData(contentsOfFile: path!)
+        assert(data != nil, "Failed to read data from: \(path))")
+        
+        // Parse JSON data
+        var err: NSError?
+        
+        let quotes = NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.allZeros, error: &err) as [String]
+        assert(err == nil, "Error parsing json; \(err)")
+        
+        return quotes
+    }
 
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
